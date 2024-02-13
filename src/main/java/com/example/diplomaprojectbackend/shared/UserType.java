@@ -1,4 +1,4 @@
-package com.example.diplomaprojectbackend.entity;
+package com.example.diplomaprojectbackend.shared;
 
 public enum UserType {
     COACH("Coach"),

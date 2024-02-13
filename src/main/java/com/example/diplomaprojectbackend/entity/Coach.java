@@ -1,5 +1,6 @@
 package com.example.diplomaprojectbackend.entity;
 
+import com.example.diplomaprojectbackend.shared.UserType;
 import jakarta.persistence.*;
 import lombok.Data;
 
