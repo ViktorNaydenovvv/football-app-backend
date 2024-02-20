@@ -17,34 +17,28 @@ public class Footballer {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false, referencedColumnName = "id")
-    private Team team;
+    @Column(name = "team_name", nullable = false)
+    private String teamName;
 
-    @Column(name = "position", nullable = false, columnDefinition = "ENUM('CB', 'RB', 'LB', 'RWB', 'LWB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST')")
+    @Column(name = "position", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Position position;
 
-    @Column(name = "pace", nullable = false, columnDefinition = "INT")
+    @Column(name = "pace", nullable = false)
     private Integer pace;
 
-    @Column(name = "shooting", nullable = false, columnDefinition = "INT")
+    @Column(name = "shooting", nullable = false)
     private Integer shooting;
 
-    @Column(name = "passing", nullable = false, columnDefinition = "INT")
+    @Column(name = "passing", nullable = false)
     private Integer passing;
 
-    @Column(name = "dribbling", nullable = false, columnDefinition = "INT")
+    @Column(name = "dribbling", nullable = false)
     private Integer dribbling;
 
-    @Column(name = "physique", nullable = false, columnDefinition = "INT")
+    @Column(name = "physique", nullable = false)
     private Integer physique;
 
-    @Column(name = "defending", nullable = false, columnDefinition = "INT")
+    @Column(name = "defending", nullable = false)
     private Integer defending;
-
-    @Column(name = "weak_foot", nullable = false, columnDefinition = "INT")
-    private Integer weakFoot;
-
-    @Column(name = "skill_moves", nullable = false, columnDefinition = "INT")
-    private Integer skillMoves;
 }

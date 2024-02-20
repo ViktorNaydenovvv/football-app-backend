@@ -1,6 +1,6 @@
 package com.example.diplomaprojectbackend.entity;
 
-import com.example.diplomaprojectbackend.shared.UserType;
+import com.example.diplomaprojectbackend.shared.CoachType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,13 +17,13 @@ public class Coach {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false, referencedColumnName = "id")
-    private Team team;
+    @Column(name = "team_name", nullable = false)
+    private String teamName;
 
-    @Column(name = "type", nullable = false, columnDefinition = "ENUM('Head coach', 'Assistant coach', 'Goalkeeper coach', 'Fitness coach', 'Conditioning coach')")
-    private UserType coachType;
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CoachType coachType;
 
-    @Column(name = "experience", nullable = false, columnDefinition = "INT")
+    @Column(name = "experience", nullable = false)
     private Integer experience;
 }

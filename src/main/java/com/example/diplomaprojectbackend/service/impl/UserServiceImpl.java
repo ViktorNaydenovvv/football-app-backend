@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public UserResponse registerUser(RegisterUserRequest request) {
+    public UserResponse register(RegisterUserRequest request) {
         try {
             User user = USER_MAPPER.fromRegisterUserRequest(request);
             user.setPassword(passwordEncoder.encode(request.getPassword()));

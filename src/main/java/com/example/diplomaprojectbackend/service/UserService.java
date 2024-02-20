@@ -5,7 +5,7 @@ import com.example.diplomaprojectbackend.controller.resource.RegisterUserRequest
 import com.example.diplomaprojectbackend.controller.resource.UserResponse;
 
 public interface UserService {
-    UserResponse registerUser(RegisterUserRequest request);
+    UserResponse register(RegisterUserRequest request);
     UserResponse login(LoginUserRequest loginRequest);
     void delete(Long id);
 }

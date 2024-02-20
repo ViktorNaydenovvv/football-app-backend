@@ -16,31 +16,23 @@ public class Goalkeeper {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false, referencedColumnName = "id")
-    private Team team;
+    @Column(name = "team_name", nullable = false)
+    private String teamName;
 
-    @Column(name = "diving", nullable = false, columnDefinition = "INT")
+    @Column(name = "diving", nullable = false)
     private Integer diving;
 
-    @Column(name = "handling", nullable = false, columnDefinition = "INT")
+    @Column(name = "handling", nullable = false)
     private Integer handling;
 
-    @Column(name = "kicking", nullable = false, columnDefinition = "INT")
+    @Column(name = "kicking", nullable = false)
     private Integer kicking;
 
-    @Column(name = "reflex", nullable = false, columnDefinition = "INT")
+    @Column(name = "reflex", nullable = false)
     private Integer reflex;
 
-    @Column(name = "speed", nullable = false, columnDefinition = "INT")
+    @Column(name = "speed", nullable = false)
     private Integer speed;
 
-    @Column(name = "positioning", nullable = false, columnDefinition = "INT")
-    private Integer positioning;
-
-    @Column(name = "weak_foot", nullable = false, columnDefinition = "INT")
-    private Integer weakFoot;
-
-    @Column(name = "skill_moves", nullable = false, columnDefinition = "INT")
-    private Integer skillMoves;
-}
+    @Column(name = "positioning", nullable = false)
+    private Integer positioning;}

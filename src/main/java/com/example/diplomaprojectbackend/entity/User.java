@@ -13,21 +13,22 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email", nullable = false, unique = true, columnDefinition = "VARCHAR(32)")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "firstName", nullable = false, columnDefinition = "VARCHAR(32)")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false, columnDefinition = "VARCHAR(32)")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "age", nullable = false, columnDefinition = "INT")
+    @Column(name = "age", nullable = false)
     private Integer age;
 
-    @Column(name = "password", nullable = false, columnDefinition = "VARCHAR(256)")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "type", nullable = false, columnDefinition = "ENUM('Coach', 'Footballer', 'Goalkeeper')")
+    @Column(name = "user_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 }
