@@ -2,8 +2,7 @@ package com.example.diplomaprojectbackend.shared;
 
 public enum UserType {
     COACH("Coach"),
-    FOOTBALLER("Footballer"),
-    GOALKEEPER("Goalkeeper");
+    FOOTBALLER("Footballer");
 
     private final String displayName;
 

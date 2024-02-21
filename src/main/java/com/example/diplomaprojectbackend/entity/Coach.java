@@ -7,7 +7,7 @@ import lombok.Data;
 @Entity
 @Table(name = "Coaches")
 @Data
-public class Coach {
+public class Coach implements AbstractUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

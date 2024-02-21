@@ -1,13 +1,13 @@
 package com.example.diplomaprojectbackend.service;
 
-import com.example.diplomaprojectbackend.controller.resource.FootballerResource;
+import com.example.diplomaprojectbackend.controller.resource.CreateFootballerReq;
+import com.example.diplomaprojectbackend.controller.resource.FetchFootballersFilters;
+import com.example.diplomaprojectbackend.entity.Footballer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface FootballerService {
-    List<FootballerResource> findAll();
-    FootballerResource getById(Long id);
-    FootballerResource save(FootballerResource footballerResource);
-    FootballerResource update(Long id, FootballerResource footballerResource);
-    void delete(Long id);
+    void save(CreateFootballerReq createFootballerReq);
+    Page<Footballer> fetch(FetchFootballersFilters filters, Pageable pageable);
 }

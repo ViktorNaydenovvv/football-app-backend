@@ -1,6 +1,7 @@
 package com.example.diplomaprojectbackend.entity;
 
 import com.example.diplomaprojectbackend.shared.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,15 +17,13 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "age", nullable = false)
     private Integer age;
 
+    @JsonIgnore()
     @Column(name = "password", nullable = false)
     private String password;
 

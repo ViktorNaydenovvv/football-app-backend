@@ -1,11 +1,16 @@
 package com.example.diplomaprojectbackend.controller;
 
-import com.example.diplomaprojectbackend.controller.resource.FootballerResource;
+import com.example.diplomaprojectbackend.controller.resource.CreateFootballerReq;
+import com.example.diplomaprojectbackend.controller.resource.FetchFootballersFilters;
+import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.service.FootballerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/v1/footballers")
@@ -13,33 +18,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class FootballerController {
     private final FootballerService footballerService;
 
-    @GetMapping
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(footballerService.findAll());
+    @PostMapping("/")
+    public void create(@Valid @RequestBody CreateFootballerReq createFootballerReq) {
+        footballerService.save(createFootballerReq);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(footballerService.getById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody FootballerResource footballerResource) {
-        FootballerResource saved = footballerService.save(footballerResource);
-
-        return ResponseEntity.created(
-                UriComponentsBuilder.fromPath("/api/v1/footballers/{id}").buildAndExpand(saved.getId()).toUri()
-        ).body(saved);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody FootballerResource footballerResource) {
-        return ResponseEntity.ok(footballerService.update(id, footballerResource));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        footballerService.delete(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/")
+    public ResponseEntity<Page<Footballer>> fetch(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @Valid @RequestBody FetchFootballersFilters filters
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Footballer> footballers = footballerService.fetch(filters, pageable);
+        return ResponseEntity.ok(footballers);
     }
 }

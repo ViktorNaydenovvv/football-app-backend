@@ -1,14 +1,20 @@
 package com.example.diplomaprojectbackend.service.impl;
 
-import com.example.diplomaprojectbackend.controller.resource.FootballerResource;
+import com.example.diplomaprojectbackend.controller.resource.CreateFootballerReq;
+import com.example.diplomaprojectbackend.controller.resource.FetchFootballersFilters;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.FootballerRepository;
 import com.example.diplomaprojectbackend.service.FootballerService;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static com.example.diplomaprojectbackend.mapper.FootballerMapper.FOOTBALLER_MAPPER;
 
@@ -16,51 +22,38 @@ import static com.example.diplomaprojectbackend.mapper.FootballerMapper.FOOTBALL
 @RequiredArgsConstructor
 public class FootballerServiceImpl implements FootballerService {
     private final FootballerRepository footballerRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     @Override
-    public List<FootballerResource> findAll() {
-        return FOOTBALLER_MAPPER.toFootballerResources(footballerRepository.findAll());
-    }
-
-    @Override
-    public FootballerResource getById(Long id) {
-        Footballer footballer = footballerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Unable to find footballer with id " + id + "!"));
-
-        return FOOTBALLER_MAPPER.toFootballerResource(footballer);
-    }
-
-    @Override
-    public FootballerResource save(FootballerResource footballerResource) {
-        return FOOTBALLER_MAPPER.toFootballerResource(footballerRepository.save(FOOTBALLER_MAPPER.fromFootballerResource(footballerResource)));
-    }
-
-    @Override
-    public FootballerResource update(Long id, FootballerResource footballerResource) {
-        Footballer footballer = footballerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Footballer with id " + id + " not found"));
-
-        footballer.setTeamName(footballerResource.getTeamName());
-        footballer.setPosition(footballerResource.getPosition());
-        footballer.setPace(footballerResource.getPace());
-        footballer.setShooting(footballerResource.getShooting());
-        footballer.setPassing(footballerResource.getPassing());
-        footballer.setDribbling(footballerResource.getDribbling());
-        footballer.setPhysique(footballerResource.getPhysique());
-        footballer.setDefending(footballerResource.getDefending());
-        footballer.setWeakFoot(footballerResource.getWeakFoot());
-        footballer.setSkillMoves(footballerResource.getSkillMoves());
-
-        return FOOTBALLER_MAPPER.toFootballerResource(footballerRepository.save(footballer));
-    }
-
-    @Override
-    public void delete(Long id) {
-        if(footballerRepository.existsById(id)) {
-            footballerRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Unable to find footballer with id " + id + "!");
+    public void save(CreateFootballerReq createFootballerReq) {
+        try {
+            createFootballerReq.getProfileData().setPassword(passwordEncoder.encode(createFootballerReq.getProfileData().getPassword()));
+            Footballer footballer = FOOTBALLER_MAPPER.fromCreateFootballerReq(createFootballerReq);
+            footballerRepository.save(footballer);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEntityFieldException("Footballer with this email already exists");
         }
     }
 
+    private Specification<Footballer> buildSpecification(FetchFootballersFilters filters) {
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (filters.getPosition() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("position"), filters.getPosition()));
+            }
+
+            if (filters.getTeamName() != null && !filters.getTeamName().isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("teamName"), filters.getTeamName()));
+            }
+
+            return predicate;
+        };
+    }
+
+    @Override
+    public Page<Footballer> fetch(FetchFootballersFilters filters, Pageable pageable) {
+        Specification<Footballer> spec = buildSpecification(filters);
+        return footballerRepository.findAll(spec, pageable);
+    }
 }

@@ -1,22 +1,20 @@
 package com.example.diplomaprojectbackend.controller.resource;
 
-import com.example.diplomaprojectbackend.entity.User;
 import com.example.diplomaprojectbackend.shared.Position;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class FootballerResource {
-    private Long id;
-    private User user;
+public class CreateFootballerReq {
+    @NotNull
+    private CreateUserDto profileData;
 
-    @NotEmpty
+    @NotNull
     private String teamName;
 
-    @NotEmpty
+    @NotNull
     private Position position;
 
     @NotNull
