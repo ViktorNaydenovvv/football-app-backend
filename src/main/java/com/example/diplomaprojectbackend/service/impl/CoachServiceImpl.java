@@ -2,10 +2,14 @@ package com.example.diplomaprojectbackend.service.impl;
 
 import com.example.diplomaprojectbackend.controller.resource.CreateCoachReq;
 import com.example.diplomaprojectbackend.controller.resource.FetchCoachesFilters;
+import com.example.diplomaprojectbackend.controller.resource.UpdateCoachReq;
+import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq;
 import com.example.diplomaprojectbackend.entity.Coach;
+import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.CoachRepository;
 import com.example.diplomaprojectbackend.service.CoachService;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
+import com.example.diplomaprojectbackend.shared.exception.InvalidIdException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -51,5 +55,33 @@ public class CoachServiceImpl implements CoachService {
     public Page<Coach> fetch(FetchCoachesFilters filters, Pageable pageable) {
         Specification<Coach> spec = buildSpecification(filters);
         return coachRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Coach getCoach(Long id) {
+        Coach coach = coachRepository.findById(id).orElse(null);
+
+        if (coach == null) {
+            throw new InvalidIdException("Invalid user id = " + id);
+        }
+
+        return coach;
+    }
+
+    @Override
+    public Coach updateCoach(Long id, UpdateCoachReq coachData) {
+        Coach coach = getCoach(id);
+        coach.setTeamName(coachData.getTeamName());
+        coach.setCoachType(coachData.getCoachType());
+        coach.setExperience(coachData.getExperience());
+        coachRepository.save(coach);
+
+        return coach;
+    }
+
+    @Override
+    public void deleteCoach(Long id) {
+        Coach coach = getCoach(id);
+        coachRepository.delete(coach);
     }
 }

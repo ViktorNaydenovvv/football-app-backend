@@ -3,6 +3,7 @@ package com.example.diplomaprojectbackend.service;
 import com.example.diplomaprojectbackend.shared.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +55,15 @@ public class JwtService {
 
     public Boolean validateToken(String token) {
         return !isTokenExpired(token);
+    }
+
+    public String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        return null;
     }
 }

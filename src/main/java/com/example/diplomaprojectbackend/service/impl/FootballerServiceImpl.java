@@ -2,10 +2,12 @@ package com.example.diplomaprojectbackend.service.impl;
 
 import com.example.diplomaprojectbackend.controller.resource.CreateFootballerReq;
 import com.example.diplomaprojectbackend.controller.resource.FetchFootballersFilters;
+import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.FootballerRepository;
 import com.example.diplomaprojectbackend.service.FootballerService;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
+import com.example.diplomaprojectbackend.shared.exception.InvalidIdException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -55,5 +57,38 @@ public class FootballerServiceImpl implements FootballerService {
     public Page<Footballer> fetch(FetchFootballersFilters filters, Pageable pageable) {
         Specification<Footballer> spec = buildSpecification(filters);
         return footballerRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Footballer getFootballer(Long id) {
+        Footballer footballer = footballerRepository.findById(id).orElse(null);
+
+        if (footballer == null) {
+            throw new InvalidIdException("Invalid user id = " + id);
+        }
+
+        return footballer;
+    }
+
+    @Override
+    public Footballer updateFootballer(Long id, UpdateFootballerReq footballerData) {
+        Footballer footballer = getFootballer(id);
+        footballer.setTeamName(footballerData.getTeamName());
+        footballer.setPosition(footballerData.getPosition());
+        footballer.setPace(footballerData.getPace());
+        footballer.setShooting(footballerData.getShooting());
+        footballer.setPassing(footballerData.getPassing());
+        footballer.setDribbling(footballerData.getDribbling());
+        footballer.setPhysique(footballerData.getPhysique());
+        footballer.setDefending(footballerData.getDefending());
+        footballerRepository.save(footballer);
+
+        return footballer;
+    }
+
+    @Override
+    public void deleteFootballer(Long id) {
+        Footballer footballer = getFootballer(id);
+        footballerRepository.delete(footballer);
     }
 }
