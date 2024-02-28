@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FootballerRepository extends JpaRepository<Footballer, Long> {
     Page<Footballer> findAll(Specification<Footballer> spec, Pageable pageable);
     Footballer findByUserId(Long userId);
+    Page<Footballer> findByUserUsernameContaining(String username, Pageable pageable);
 }

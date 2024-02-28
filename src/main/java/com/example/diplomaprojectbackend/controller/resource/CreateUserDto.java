@@ -21,6 +21,9 @@ public class CreateUserDto {
     private Integer age;
 
     @NotNull
+    private String photo;
+
+    @NotNull
     private UserType userType;
 
     @NotNull

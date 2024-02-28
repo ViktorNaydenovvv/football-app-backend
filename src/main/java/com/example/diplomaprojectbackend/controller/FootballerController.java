@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FootballerController {
     private final FootballerService footballerService;
-    //private final JwtService jwtService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public void create(@Valid @RequestBody CreateFootballerReq createFootballerReq) {
@@ -44,16 +44,32 @@ public class FootballerController {
         return ResponseEntity.ok(footballerService.getFootballer(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<Footballer>> searchByUsername(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String username
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Footballer> footballers = footballerService.findByUsername(username, pageable);
+        return ResponseEntity.ok(footballers);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Footballer> updateFootballer(@PathVariable Long id, @Valid @RequestBody UpdateFootballerReq footballerData) {
-        return ResponseEntity.ok(footballerService.updateFootballer(id, footballerData));
+    public ResponseEntity<Footballer> updateFootballer(@NotNull HttpServletRequest request, @PathVariable Long id, @Valid @RequestBody UpdateFootballerReq footballerData) {
+        String jwt = jwtService.extractJwtFromRequest(request);
+        String email = jwtService.extractEmail(jwt);
+
+        return ResponseEntity.ok(footballerService.updateFootballer(id, footballerData, email));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFootballer(@PathVariable Long id) {
-        //(@NotNull HttpServletRequest request)
-        //String jwt = jwtService.extractJwtFromRequest(request);
-        footballerService.deleteFootballer(id);
+    public ResponseEntity<Void> deleteFootballer(@NotNull HttpServletRequest request, @PathVariable Long id) {
+        String jwt = jwtService.extractJwtFromRequest(request);
+        String email = jwtService.extractEmail(jwt);
+
+        footballerService.deleteFootballer(id, email);
+
         return ResponseEntity.noContent().build();
     }
 }

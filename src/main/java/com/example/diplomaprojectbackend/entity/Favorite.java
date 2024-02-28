@@ -12,11 +12,11 @@ public class Favorite {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "liker_user_id", nullable = false, referencedColumnName = "id")
     private User liker;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "liked_user_id", nullable = false, referencedColumnName = "id")
     private User liked;
 }

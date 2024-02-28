@@ -12,6 +12,7 @@ public interface FootballerService {
     void save(CreateFootballerReq createFootballerReq);
     Page<Footballer> fetch(FetchFootballersFilters filters, Pageable pageable);
     Footballer getFootballer(Long id);
-    Footballer updateFootballer(Long id, UpdateFootballerReq footballerData);
-    void deleteFootballer(Long id);
+    Page<Footballer> findByUsername(String username, Pageable pageable);
+    Footballer updateFootballer(Long id, UpdateFootballerReq footballerData, String email);
+    void deleteFootballer(Long id, String email);
 }

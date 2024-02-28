@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Users")
 @Data
@@ -22,6 +24,9 @@ public class User {
 
     @Column(name = "age", nullable = false)
     private Integer age;
+
+    @Column(name = "photo", nullable = false)
+    private String photo;
 
     @JsonIgnore()
     @Column(name = "password", nullable = false)

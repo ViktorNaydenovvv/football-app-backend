@@ -6,6 +6,7 @@ import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.FootballerRepository;
 import com.example.diplomaprojectbackend.service.FootballerService;
+import com.example.diplomaprojectbackend.shared.exception.ActionForbiddenException;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
 import com.example.diplomaprojectbackend.shared.exception.InvalidIdException;
 import jakarta.persistence.criteria.Predicate;
@@ -70,9 +71,18 @@ public class FootballerServiceImpl implements FootballerService {
         return footballer;
     }
 
+    public Page<Footballer> findByUsername(String username, Pageable pageable) {
+        return footballerRepository.findByUserUsernameContaining(username, pageable);
+    }
+
     @Override
-    public Footballer updateFootballer(Long id, UpdateFootballerReq footballerData) {
+    public Footballer updateFootballer(Long id, UpdateFootballerReq footballerData, String email) {
         Footballer footballer = getFootballer(id);
+
+        if (!footballer.getUser().getEmail().equals(email)) {
+            throw new ActionForbiddenException("Action forbidden");
+        }
+
         footballer.setTeamName(footballerData.getTeamName());
         footballer.setPosition(footballerData.getPosition());
         footballer.setPace(footballerData.getPace());
@@ -87,8 +97,13 @@ public class FootballerServiceImpl implements FootballerService {
     }
 
     @Override
-    public void deleteFootballer(Long id) {
+    public void deleteFootballer(Long id, String email) {
         Footballer footballer = getFootballer(id);
+
+        if (!footballer.getUser().getEmail().equals(email)) {
+            throw new ActionForbiddenException("Action forbidden");
+        }
+
         footballerRepository.delete(footballer);
     }
 }

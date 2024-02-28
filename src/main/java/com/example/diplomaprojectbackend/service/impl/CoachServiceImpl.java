@@ -8,6 +8,7 @@ import com.example.diplomaprojectbackend.entity.Coach;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.CoachRepository;
 import com.example.diplomaprojectbackend.service.CoachService;
+import com.example.diplomaprojectbackend.shared.exception.ActionForbiddenException;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
 import com.example.diplomaprojectbackend.shared.exception.InvalidIdException;
 import jakarta.persistence.criteria.Predicate;
@@ -68,9 +69,18 @@ public class CoachServiceImpl implements CoachService {
         return coach;
     }
 
+    public Page<Coach> findByUsername(String username, Pageable pageable) {
+        return coachRepository.findByUserUsernameContaining(username, pageable);
+    }
+
     @Override
-    public Coach updateCoach(Long id, UpdateCoachReq coachData) {
+    public Coach updateCoach(Long id, UpdateCoachReq coachData, String email) {
         Coach coach = getCoach(id);
+
+        if (!coach.getUser().getEmail().equals(email)) {
+            throw new ActionForbiddenException("Action forbidden");
+        }
+
         coach.setTeamName(coachData.getTeamName());
         coach.setCoachType(coachData.getCoachType());
         coach.setExperience(coachData.getExperience());
@@ -80,8 +90,13 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public void deleteCoach(Long id) {
+    public void deleteCoach(Long id, String email) {
         Coach coach = getCoach(id);
+
+        if (!coach.getUser().getEmail().equals(email)) {
+            throw new ActionForbiddenException("Action forbidden");
+        }
+
         coachRepository.delete(coach);
     }
 }

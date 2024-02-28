@@ -7,6 +7,7 @@ import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq
 import com.example.diplomaprojectbackend.entity.Coach;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.service.CoachService;
+import com.example.diplomaprojectbackend.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CoachController {
     private final CoachService coachService;
-    //private final JwtService jwtService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public void create(@Valid @RequestBody CreateCoachReq createCoachReq) {
@@ -45,16 +46,32 @@ public class CoachController {
         return ResponseEntity.ok(coachService.getCoach(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<Coach>> searchByUsername(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String username
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Coach> coaches = coachService.findByUsername(username, pageable);
+        return ResponseEntity.ok(coaches);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Coach> updateCoach(@PathVariable Long id, @Valid @RequestBody UpdateCoachReq coachData) {
-        return ResponseEntity.ok(coachService.updateCoach(id, coachData));
+    public ResponseEntity<Coach> updateCoach(@NotNull HttpServletRequest request, @PathVariable Long id, @Valid @RequestBody UpdateCoachReq coachData) {
+        String jwt = jwtService.extractJwtFromRequest(request);
+        String email = jwtService.extractEmail(jwt);
+
+        return ResponseEntity.ok(coachService.updateCoach(id, coachData, email));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCoach(@PathVariable Long id) {
-        //(@NotNull HttpServletRequest request)
-        //String jwt = jwtService.extractJwtFromRequest(request);
-        coachService.deleteCoach(id);
+    public ResponseEntity<Void> deleteFootballer(@NotNull HttpServletRequest request, @PathVariable Long id) {
+        String jwt = jwtService.extractJwtFromRequest(request);
+        String email = jwtService.extractEmail(jwt);
+
+        coachService.deleteCoach(id, email);
+
         return ResponseEntity.noContent().build();
     }
 }
