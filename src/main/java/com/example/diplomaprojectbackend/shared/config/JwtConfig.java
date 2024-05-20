@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.security.Key;
 
+
 @Configuration
 public class JwtConfig {
     @Value("4m16ftp129f12k9a64a1ue27120a259c")

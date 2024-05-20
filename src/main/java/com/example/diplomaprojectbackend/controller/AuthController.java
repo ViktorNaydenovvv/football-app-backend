@@ -1,7 +1,7 @@
 package com.example.diplomaprojectbackend.controller;
 
 import com.example.diplomaprojectbackend.controller.resource.AuthResponse;
-import com.example.diplomaprojectbackend.controller.resource.SignInRequest;
+import com.example.diplomaprojectbackend.controller.resource.SignInReq;
 import com.example.diplomaprojectbackend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signIn(@Valid @RequestBody SignInRequest signInData) {
+    public ResponseEntity<AuthResponse> signIn(@Valid @RequestBody SignInReq signInData) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(signInData));
     }
 }

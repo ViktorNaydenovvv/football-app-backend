@@ -3,9 +3,7 @@ package com.example.diplomaprojectbackend.service.impl;
 import com.example.diplomaprojectbackend.controller.resource.CreateCoachReq;
 import com.example.diplomaprojectbackend.controller.resource.FetchCoachesFilters;
 import com.example.diplomaprojectbackend.controller.resource.UpdateCoachReq;
-import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq;
 import com.example.diplomaprojectbackend.entity.Coach;
-import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.CoachRepository;
 import com.example.diplomaprojectbackend.service.CoachService;
 import com.example.diplomaprojectbackend.shared.exception.ActionForbiddenException;
@@ -69,6 +67,7 @@ public class CoachServiceImpl implements CoachService {
         return coach;
     }
 
+    @Override
     public Page<Coach> findByUsername(String username, Pageable pageable) {
         return coachRepository.findByUserUsernameContaining(username, pageable);
     }

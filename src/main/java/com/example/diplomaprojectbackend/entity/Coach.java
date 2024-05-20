@@ -13,7 +13,7 @@ public class Coach implements AbstractUser {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 

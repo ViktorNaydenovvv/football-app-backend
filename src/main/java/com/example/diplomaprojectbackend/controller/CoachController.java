@@ -30,7 +30,7 @@ public class CoachController {
         coachService.save(createCoachReq);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Page<Coach>> fetch(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -66,7 +66,7 @@ public class CoachController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFootballer(@NotNull HttpServletRequest request, @PathVariable Long id) {
+    public ResponseEntity<Void> deleteCoach(@NotNull HttpServletRequest request, @PathVariable Long id) {
         String jwt = jwtService.extractJwtFromRequest(request);
         String email = jwtService.extractEmail(jwt);
 

@@ -1,7 +1,7 @@
 package com.example.diplomaprojectbackend.service.impl;
 
 import com.example.diplomaprojectbackend.controller.resource.AuthResponse;
-import com.example.diplomaprojectbackend.controller.resource.SignInRequest;
+import com.example.diplomaprojectbackend.controller.resource.SignInReq;
 import com.example.diplomaprojectbackend.entity.User;
 import com.example.diplomaprojectbackend.repository.CoachRepository;
 import com.example.diplomaprojectbackend.repository.FootballerRepository;
@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
-    public AuthResponse signIn(SignInRequest signInData) {
+    public AuthResponse signIn(SignInReq signInData) {
         final User user = userRepository.findByEmail(signInData.getEmail());
 
         if (user == null) {

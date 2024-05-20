@@ -1,7 +1,6 @@
 package com.example.diplomaprojectbackend.repository;
 
 import com.example.diplomaprojectbackend.entity.Coach;
-import com.example.diplomaprojectbackend.entity.Footballer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

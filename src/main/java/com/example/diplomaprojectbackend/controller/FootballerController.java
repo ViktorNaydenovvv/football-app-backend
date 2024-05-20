@@ -28,7 +28,7 @@ public class FootballerController {
         footballerService.save(createFootballerReq);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Page<Footballer>> fetch(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

@@ -20,8 +20,8 @@ public class CreateUserDto {
     @Min(1)
     private Integer age;
 
-    @NotNull
-    private String photo;
+    //@NotNull
+    //private String photo;
 
     @NotNull
     private UserType userType;

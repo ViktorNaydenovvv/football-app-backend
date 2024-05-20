@@ -1,8 +1,8 @@
 package com.example.diplomaprojectbackend.service;
 
 import com.example.diplomaprojectbackend.controller.resource.AuthResponse;
-import com.example.diplomaprojectbackend.controller.resource.SignInRequest;
+import com.example.diplomaprojectbackend.controller.resource.SignInReq;
 
 public interface AuthService {
-    AuthResponse signIn(SignInRequest signInData);
+    AuthResponse signIn(SignInReq signInData);
 }

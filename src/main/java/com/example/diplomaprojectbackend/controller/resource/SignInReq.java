@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class SignInRequest {
+public class SignInReq {
     @NotEmpty
     @Size(min = 8, max = 64)
     private String email;
