@@ -8,9 +8,12 @@ import com.example.diplomaprojectbackend.entity.Coach;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface CoachService {
-    void save(CreateCoachReq createCoachReq);
+    void save(CreateCoachReq createCoachReq) throws IOException;
     Page<Coach> fetch(FetchCoachesFilters filters, Pageable pageable);
     Coach getCoach(Long id);
     Page<Coach> findByUsername(String username, Pageable pageable);

@@ -13,10 +13,10 @@ public class Favorite {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "liker_user_id", nullable = false, referencedColumnName = "id")
-    private User liker;
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    private User user;
 
     @ManyToOne
-    @JoinColumn(name = "liked_user_id", nullable = false, referencedColumnName = "id")
-    private User liked;
+    @JoinColumn(name = "favorite_user_id", nullable = false, referencedColumnName = "id")
+    private User favoriteUser;
 }

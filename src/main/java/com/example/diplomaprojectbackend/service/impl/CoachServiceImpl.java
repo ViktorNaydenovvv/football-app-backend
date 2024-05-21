@@ -5,6 +5,7 @@ import com.example.diplomaprojectbackend.controller.resource.FetchCoachesFilters
 import com.example.diplomaprojectbackend.controller.resource.UpdateCoachReq;
 import com.example.diplomaprojectbackend.entity.Coach;
 import com.example.diplomaprojectbackend.repository.CoachRepository;
+import com.example.diplomaprojectbackend.service.AzureBlobService;
 import com.example.diplomaprojectbackend.service.CoachService;
 import com.example.diplomaprojectbackend.shared.exception.ActionForbiddenException;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
@@ -18,6 +19,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static com.example.diplomaprojectbackend.mapper.CoachMapper.COACH_MAPPER;
 
@@ -25,17 +29,24 @@ import static com.example.diplomaprojectbackend.mapper.CoachMapper.COACH_MAPPER;
 @RequiredArgsConstructor
 public class CoachServiceImpl implements CoachService {
     private final CoachRepository coachRepository;
+    private final AzureBlobService azureBlobService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     @Override
-    public void save(CreateCoachReq createCoachReq) {
-        try {
-            createCoachReq.getProfileData().setPassword(passwordEncoder.encode(createCoachReq.getProfileData().getPassword()));
-            Coach coach = COACH_MAPPER.fromCreateCoachReq(createCoachReq);
-            coachRepository.save(coach);
-        } catch (DataIntegrityViolationException e) {
+    public void save(CreateCoachReq createCoachReq) throws IOException {
+        final Coach doesExists = coachRepository.findByUserEmail(createCoachReq.getProfileData().getEmail());
+
+        if (doesExists != null) {
             throw new DuplicateEntityFieldException("Coach with this email already exists");
         }
+
+        //final String photoUrl = azureBlobService.uploadPhoto(photo).join();
+        createCoachReq.getProfileData().setPassword(passwordEncoder.encode(createCoachReq.getProfileData().getPassword()));
+
+        Coach coach = COACH_MAPPER.fromCreateCoachReq(createCoachReq);
+        coach.getUser().setPhoto("");
+
+        coachRepository.save(coach);
     }
 
     private Specification<Coach> buildSpecification(FetchCoachesFilters filters) {
@@ -97,5 +108,6 @@ public class CoachServiceImpl implements CoachService {
         }
 
         coachRepository.delete(coach);
+        azureBlobService.deletePhoto(coach.getUser().getPhoto());
     }
 }

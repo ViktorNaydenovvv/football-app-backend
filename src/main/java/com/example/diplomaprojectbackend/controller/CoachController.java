@@ -17,6 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/coaches")
@@ -25,8 +28,16 @@ public class CoachController {
     private final CoachService coachService;
     private final JwtService jwtService;
 
+//    @PostMapping("/register")
+//    public void create(
+//        @RequestPart("data")@Valid CreateCoachReq createCoachReq,
+//        @RequestPart("photo") MultipartFile photo
+//    ) throws IOException {
+//        coachService.save(createCoachReq, photo);
+//    }
+
     @PostMapping("/register")
-    public void create(@Valid @RequestBody CreateCoachReq createCoachReq) {
+    public void create(@Valid @RequestBody CreateCoachReq createCoachReq) throws IOException {
         coachService.save(createCoachReq);
     }
 
@@ -34,8 +45,16 @@ public class CoachController {
     public ResponseEntity<Page<Coach>> fetch(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @Valid @RequestBody FetchCoachesFilters filters
+            @RequestBody(required=false) FetchCoachesFilters filters
     ) {
+        if (filters == null) {
+            FetchCoachesFilters filter = new FetchCoachesFilters();
+            // TODO: remove this
+            System.out.println(filter);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Coach> coaches = coachService.fetch(filter, pageable);
+            return ResponseEntity.ok(coaches);
+        }
         Pageable pageable = PageRequest.of(page, size);
         Page<Coach> coaches = coachService.fetch(filters, pageable);
         return ResponseEntity.ok(coaches);

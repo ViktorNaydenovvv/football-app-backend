@@ -15,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/footballers")
@@ -23,8 +26,16 @@ public class FootballerController {
     private final FootballerService footballerService;
     private final JwtService jwtService;
 
+//    @PostMapping("/register")
+//    public void create(
+//        @RequestPart("data") @Valid CreateFootballerReq createFootballerReq
+//        //@RequestPart("photo") MultipartFile photo
+//    ) throws IOException {
+//        footballerService.save(createFootballerReq);
+//    }
+
     @PostMapping("/register")
-    public void create(@Valid @RequestBody CreateFootballerReq createFootballerReq) {
+    public void create(@Valid @RequestBody CreateFootballerReq createFootballerReq) throws IOException {
         footballerService.save(createFootballerReq);
     }
 
@@ -32,8 +43,17 @@ public class FootballerController {
     public ResponseEntity<Page<Footballer>> fetch(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @Valid @RequestBody FetchFootballersFilters filters
+            @RequestBody(required=false) FetchFootballersFilters filters
     ) {
+        if (filters == null) {
+            FetchFootballersFilters filter = new FetchFootballersFilters();
+            // TODO: remove this
+            System.out.println(filter);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Footballer> footballers = footballerService.fetch(filter, pageable);
+            return ResponseEntity.ok(footballers);
+        }
+        System.out.println(filters);
         Pageable pageable = PageRequest.of(page, size);
         Page<Footballer> footballers = footballerService.fetch(filters, pageable);
         return ResponseEntity.ok(footballers);
@@ -46,9 +66,9 @@ public class FootballerController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<Footballer>> searchByUsername(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String username
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam String username
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Footballer> footballers = footballerService.findByUsername(username, pageable);

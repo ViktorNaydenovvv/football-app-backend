@@ -5,19 +5,22 @@ import com.example.diplomaprojectbackend.controller.resource.FetchFootballersFil
 import com.example.diplomaprojectbackend.controller.resource.UpdateFootballerReq;
 import com.example.diplomaprojectbackend.entity.Footballer;
 import com.example.diplomaprojectbackend.repository.FootballerRepository;
+import com.example.diplomaprojectbackend.service.AzureBlobService;
 import com.example.diplomaprojectbackend.service.FootballerService;
 import com.example.diplomaprojectbackend.shared.exception.ActionForbiddenException;
 import com.example.diplomaprojectbackend.shared.exception.DuplicateEntityFieldException;
 import com.example.diplomaprojectbackend.shared.exception.InvalidIdException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static com.example.diplomaprojectbackend.mapper.FootballerMapper.FOOTBALLER_MAPPER;
 
@@ -25,17 +28,24 @@ import static com.example.diplomaprojectbackend.mapper.FootballerMapper.FOOTBALL
 @RequiredArgsConstructor
 public class FootballerServiceImpl implements FootballerService {
     private final FootballerRepository footballerRepository;
+    private final AzureBlobService azureBlobService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     @Override
-    public void save(CreateFootballerReq createFootballerReq) {
-        try {
-            createFootballerReq.getProfileData().setPassword(passwordEncoder.encode(createFootballerReq.getProfileData().getPassword()));
-            Footballer footballer = FOOTBALLER_MAPPER.fromCreateFootballerReq(createFootballerReq);
-            footballerRepository.save(footballer);
-        } catch (DataIntegrityViolationException e) {
+    public void save(CreateFootballerReq createFootballerReq) throws IOException {
+        final Footballer doesExists = footballerRepository.findByUserEmail(createFootballerReq.getProfileData().getEmail());
+
+        if (doesExists != null) {
             throw new DuplicateEntityFieldException("Footballer with this email already exists");
         }
+
+        //final String photoUrl = azureBlobService.uploadPhoto(photo).join();
+        createFootballerReq.getProfileData().setPassword(passwordEncoder.encode(createFootballerReq.getProfileData().getPassword()));
+
+        Footballer footballer = FOOTBALLER_MAPPER.fromCreateFootballerReq(createFootballerReq);
+        footballer.getUser().setPhoto("");
+
+        footballerRepository.save(footballer);
     }
 
     private Specification<Footballer> buildSpecification(FetchFootballersFilters filters) {
@@ -105,5 +115,6 @@ public class FootballerServiceImpl implements FootballerService {
         }
 
         footballerRepository.delete(footballer);
+        azureBlobService.deletePhoto(footballer.getUser().getPhoto());
     }
 }
